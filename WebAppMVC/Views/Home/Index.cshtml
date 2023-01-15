@@ -1,8 +1,248 @@
-﻿@{
+﻿@model IEnumerable<Data.DataContext.Balero>
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h1>Registro de Productos</h1>
+<br />
+<p>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#nuevoBaleroModal">
+        <i class="fas fa-plus-circle"></i> Nuevo Producto
+    </button>
+</p>
+
+<div class="modal fade" id="nuevoBaleroModal" tabindex="-1" role="dialog" aria-labelledby="nuevoBaleroModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="nuevoBaleroModalLabel">Nuevo producto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Insertar" id="nuevoBalero">
+                    <div class="form-group">
+                        <label for="Balero-Marca">Marca</label>
+                        <input type="text" class="form-control" autocomplete="off" id="Balero-Marca" name="Marca" placeholder="Ingresa la Marca del producto">
+                    </div>
+                    <div class="form-group">
+                        <label for="Balero-Codigo">Codigo</label>
+                        <input type="text" class="form-control" autocomplete="off" id="Balero-Codigo" name="Codigo" placeholder="Ingresa el Codigo del producto">
+                    </div>
+                    <div class="form-group">
+                        <label for="Balero-price">Precio</label>
+                        <input type="number" step="0.01" class="form-control" autocomplete="off" id="Balero-price" name="Precio" placeholder="Ingresa el precio del producto">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Crear</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger">
+                        @ViewBag.ErrorMessage
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
+<div class="modal fade" id="editBaleroModal" tabindex="-1" role="dialog" aria-labelledby="editBaleroModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editBaleroModalLabel">Editar Balero</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Actualizar" method="post" id="editarBalero">
+                    <div class="form-group">
+                        <input type="hidden" class="form-control" autocomplete="off" id="edit-IdBaleros" name="IdBaleros">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Balero-Marca">Marca</label>
+                        <input type="text" class="form-control" autocomplete="off" id="edit-Marca" name="Marca">
+                    </div>
+                    <div class="form-group">
+                        <label for="Balero-Codigo">Codigo</label>
+                        <input type="text" class="form-control" autocomplete="off" id="edit-Codigo" name="Codigo">
+                    </div>
+                    <div class="form-group">
+                        <label for="Balero-price">Precio</label>
+                        <input type="number" step="0.01" autocomplete="off" class="form-control" id="edit-precio" name="Precio">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Editar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-danger">
+                        @ViewBag.ErrorMessage
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="verBaleroModal" tabindex="-1" role="dialog" aria-labelledby="verBaleroModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="verBaleroModalLabel">Ver Balero</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="verBalero">
+                    <div class="form-group">
+                        <label for="Balero-Marcar">Marca</label>
+                        <input type="text" class="form-control" id="ver-Marca" name="Marca" readonly disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="Balero-Codigo">Codigo</label>
+                        <input type="text" class="form-control" id="ver-Codigo" name="Codigo" readonly disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="Balero-price">Precio</label>
+                        <input type="number" step="0.01" class="form-control" id="ver-precio" name="Precio" readonly disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="Balero-fecha">Fecha creción</label>
+                        <input type="text" class="form-control" id="ver-fecha" name="fecha" readonly disabled>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table table-hover" id="mitabla">
+    <thead>
+        <tr align="center">
+            <th>
+                @Html.DisplayNameFor(model => model.Marca)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Codigo)
+            </th>
+            <th>
+                ($) @Html.DisplayNameFor(model => model.Precio)
+            </th>
+            <th>
+                <a>Opciones</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+
+
+            @foreach (var item in Model)
+            {
+                <tr align="center">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Marca)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Codigo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Precio)
+                    </td>
+                    <td align="center">
+
+                        <a type="submit" class="btn btn-secondary btn-edit" role="button" aria-pressed="true" Balero-id="@item.IdBaleros" data-toggle="modal" data-target="#editBaleroModal">
+                            <i class="fas fa-pencil-alt"></i> Editar
+                        </a>
+
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        <a type="submit" class="btn btn-info btn-ver" role="button" aria-pressed="true" Balero-id="@item.IdBaleros" data-toggle="modal" data-target="#verBaleroModal">
+                            <i class="fa fa-eye"></i> Ver
+                        </a>
+
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        <a type="submit" class="btn btn-danger btn-delete" role="button" aria-pressed="true" data-Balero-id="@item.IdBaleros">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </a>
+
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        $('#mitabla').DataTable();
+    });
+</script>
+<script>
+    $('.btn-delete').on('click', function (e) {
+        e.preventDefault(); // Previene el comportamiento por defecto del botón (redirigir a otra vista)
+
+        // Obtiene el ID del producto a eliminar
+        var IdBalero = $(this).attr('data-Balero-id');
+
+        // Muestra una alerta que pregunta si quieres eliminar el producto
+        if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+            // Envía una solicitud DELETE al controlador
+            $.ajax({
+                type: 'DELETE',
+                url: '/Home/Eliminar/' + IdBalero,
+                success: function (result) {
+                    // Si se ha eliminado el producto con éxito, recarga la página
+                    location.reload();
+                }
+            });
+        }
+    });
+
+    $('.btn-edit').click(function () {
+        var IdBalero = $(this).attr('Balero-id');
+        $.ajax({
+            url: '/Home/Obtener/' + IdBalero,
+            type: 'POST',
+            success: function (response) {
+                console.log(response);
+                console.log(Object.keys(response));
+                $('#edit-IdBaleros').val(response.valor.idBaleros);
+                $('#edit-Marca').val(response.valor.marca);
+                $('#edit-Codigo').val(response.valor.codigo);
+                $('#edit-precio').val(response.valor.precio);
+            }
+        });
+    });
+
+    $('.btn-ver').click(function () {
+        var IdBalero = $(this).attr('Balero-id');
+        $.ajax({
+            url: '/Home/Obtener/' + IdBalero,
+            type: 'POST',
+            success: function (response) {
+                console.log('los valores son =>', response.valor);
+                $('#ver-Marca').val(response.valor.marca);
+                $('#ver-Codigo').val(response.valor.codigo);
+                $('#ver-precio').val(response.valor.precio);
+                $('#ver-fecha').val(response.valor.fechaCreate);
+            },
+            error: function (response) {
+                console.log('el error que te pasa es :', response);
+            }
+        });
+    });
+
+</script>
