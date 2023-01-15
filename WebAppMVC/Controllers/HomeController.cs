@@ -18,7 +18,7 @@ namespace WebAppMVC.Controllers
         public async Task<IActionResult> Index()
         {
             var Baleros = await _baleroService.ObtenerTodos();
-            return View();
+            return View(Baleros);
         }
 
         [HttpPost]

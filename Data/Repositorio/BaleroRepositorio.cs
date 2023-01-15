@@ -17,14 +17,14 @@ namespace Data.Repositorio
 
         public async Task<bool> Actualizar(Balero model)
         {
-            _MvcContext.Baleros.Add(model);
+            _MvcContext.Baleros.Update(model);
             await _MvcContext.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> Eliminar(int id)
         {
-           _MvcContext.Baleros.First(e => e.IdBaleros == id);
+          Balero balero = _MvcContext.Baleros.First(e => e.IdBaleros == id);
             await _MvcContext.SaveChangesAsync();
             return true;
         }
